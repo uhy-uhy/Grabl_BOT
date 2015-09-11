@@ -15,13 +15,23 @@ namespace MouseTest1
 {
 	public partial class Form1 : Form
 	{
+		// Watcher
+		private OrderdKeyWatcher _watcher;
+					
+		private ImageSearch _ims;
+
+
 		public Form1()
 		{
-			this.KeyPress += new KeyPressEventHandler(KeyPressEvent);
-
 			InitializeComponent();
 
+			_ims = new ImageSearch();
+
+			// キーボードを監視する
+			_watcher = new OrderdKeyWatcher(50, 1000, callBackMethod, (int)Keys.LShiftKey, (int)Keys.LShiftKey);
+			_watcher.Watch();
 		}
+
 
 		// マウスイベント(mouse_eventの引数と同様のデータ)
 		[StructLayout(LayoutKind.Sequential)]
@@ -101,7 +111,7 @@ namespace MouseTest1
 
 		// マウスの右ボタンをクリックする
 		//private void button1_Click(object sender, EventArgs e)
-		private void button1_Click()
+		private void right_Click()
 		{
 			// 自ウインドウを非表示(マウス操作対象のウィンドウへフォーカスを移動するため)
 			this.Visible = false;
@@ -148,7 +158,7 @@ namespace MouseTest1
 		}
 
 		// マウスの左ボタンをダブルクリックする
-		private void button2_Click(object sender, EventArgs e)
+		private void left_double_Click(object sender, EventArgs e)
 		{
 			// 自ウインドウを非表示(マウス操作対象のウィンドウへフォーカスを移動するため)
 			this.Visible = false;
@@ -212,28 +222,12 @@ namespace MouseTest1
 			this.Visible = true;
 		}
 
-		//KeyDownイベントハンドラ
-		public void KeyPressEvent(object sender, KeyPressEventArgs e)
+		// イベント時に呼び出される
+		private void callBackMethod(object sender, KeyWatcherEventArgs e)
 		{
-			Debug.WriteLine(e.KeyChar);
-			switch (e.KeyChar)
-			{
-				case (char)112:
-					Debug.WriteLine("F1キーが押されました。");
-					break;
-				case (char)65:
-				case (char)97:
-					MessageBox.Show("Control.KeyPress: '" +
-						e.KeyChar.ToString() + "' consumed.");
-					e.Handled = true;
-					break;
-				case (char)16:
-					MessageBox.Show("Control.KeyPress: '" +
-						e.KeyChar.ToString() + "' consumed.");
-					e.Handled = true;
-					break;
-			}
-
+			Debug.WriteLine("shift２回");
+			_ims.getActiveWindowImage();
+			//_ims.createPatternFile();
 		}
 	}
 
